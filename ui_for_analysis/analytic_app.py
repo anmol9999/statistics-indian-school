@@ -22,12 +22,13 @@ def load_data(op):
     elif op=='boys toilet':
         boys_toilet = pd.read_csv('datasets\schools-with-boys-toilet.csv')
         return boys_toilet
-    elif op=='boys toilet':
-        girls_toilet = pd.read_csv('datasets\schools-with-girls-toilet.csv')
-        return girls_toilet
+    #elif op=='boys toilet':
+       # girls_toilet = pd.read_csv('datasets\schools-with-girls-toilet.csv')
+        #return girls_toilet
 
 st.title("School Management statistics analysis")
 st.subheader("This is a streamlit dashboard to analyze school management statistics")
+
 
 def dropout_analysis():   
     df=load_data('dropout')
@@ -42,7 +43,7 @@ def dropout_analysis():
     sel_year = st.selectbox("Select Year",years)
     if sel_year==years[0]:
         fig, ax = plt.subplots(figsize =(15,5))
-        #ax.set_facecolor('black')
+        ax.set_facecolor('black')
         plt.xticks(rotation='vertical')
         plt.bar(c['State_UT'],c['Primary_Total'])
         plt.bar(c['State_UT'],c['Upper Primary_Total'],color = 'Black')
@@ -53,10 +54,10 @@ def dropout_analysis():
         st.pyplot(fig)
     elif sel_year==years[1]:
         fig,ax = plt.subplots(figsize = (15,5))
-        #ax.set_facecolor('black')
+        ax.set_facecolor('black')
         plt.xticks(rotation = 'vertical')
         plt.bar(c['State_UT'],c['Primary_Total'])
-        plt.bar(c['State_UT'],c['Upper Primary_Total'],color = 'Black')
+        plt.bar(c['State_UT'],c['Upper Primary_Total'],color = 'yellow')
         plt.bar(c['State_UT'],c['Secondary _Total'])
         plt.bar(c['State_UT'],c['HrSecondary_Total'], color = 'pink')
         plt.title('2013-14')
@@ -64,6 +65,7 @@ def dropout_analysis():
         st.pyplot(fig)
     elif sel_year==years[2]:
         fig,ax = plt.subplots(figsize = (15,5))
+        ax.set_facecolor('black')
         plt.xticks(rotation = 'vertical')
         plt.bar(c['State_UT'],c['Primary_Total'])
         plt.bar(c['State_UT'],c['Upper Primary_Total'],color = 'red')
@@ -211,8 +213,48 @@ def schools_with_comp():
         fig = go.Figure(data = data,layout=layout)
         st.plotly_chart(fig)
 
-    
-options = ['Dropout','Enrollment','Schools with Computer','Boys Toilet facility','Girls Toilet facility']
+def boys_toilet():
+    df=load_data('boys toilet')
+    boys_melt = pd.melt(df, id_vars=['State_UT', 'year'], var_name='School_Level', value_name = 'toilet')
+    ops=['Year-wise percentage','State-wise percentage']
+    s_ops=st.selectbox('Select',ops)
+    if s_ops==ops[0]:
+        years=['2013-14','2014-15','2015-16']
+        sel=st.selectbox('Select Year',years)
+        if sel==years[0]:
+            boys_2013 = boys_melt.iloc[np.where(boys_melt.year=='2013-14')]
+            fig=boys_2013.groupby(['School_Level']).mean().sort_values(by='toilet')
+            st.subheader('Toilet Failities for boys in all School Categories in 2013-14 session')
+            st.bar_chart(fig,height=500)
+        elif sel==years[1]:
+            boys_2014 = boys_melt.iloc[np.where(boys_melt.year=='2014-15')]
+            fig=boys_2014.groupby(['School_Level']).mean().sort_values(by='toilet')
+            st.subheader('Toilet Failities for boys in all School Categories in 2014-15 session')
+            st.bar_chart(fig,height=500)
+        elif sel==years[2]:
+            boys_2015 = boys_melt.iloc[np.where(boys_melt.year=='2015-16')]
+            fig=boys_2015.groupby(['School_Level']).mean().sort_values(by='toilet')
+            st.subheader('Toilet Failities for boys in all School Categories in 2015-16 session')
+            st.bar_chart(fig,height=500)
+    if s_ops==ops[1]:
+        fig=boys_melt.groupby(['State_UT'])['toilet'].mean().sort_values()
+        st.bar_chart(fig,height=500, use_container_width=False)
+
+
+def conclude():
+    ops=['Dropout Analysis','Enrollment Analysis','Computer facility', 'Toilet Facility']
+    sel=st.selectbox('Select',ops)
+    if sel == ops[0]:
+        st.subheader('From the bar chart we can conclude that maximum students dropout in Odisha during their secondary education in all three years.')
+    elif sel == ops[1]:
+        st.subheader('From the analysis, we can conclude that the number of girls that enroll during higher secondary is way less than the number of boys.')
+    elif sel == ops[2]:
+        st.subheader('We can conclude that Lakswadeep has the highest computer facility with Bihar being the state with least computers facility.')
+    elif sel == ops[3]:
+        st.subheader('From the above analysis we can see that secondary education schools have the least toilet facilities for boys .')
+        st.subheader('We can see that Mizoram has the least toilet facilities while Karnataka has the most toilet facilities.')
+
+options = ['Dropout','Enrollment','Schools with Computer','Boys Toilet facility','Conclusion']
 choice = st.sidebar.radio("Select any option", options)
 if choice == options[0]:
     dropout_analysis()
@@ -221,6 +263,8 @@ elif choice == options[1]:
 elif choice == options[2]:
     schools_with_comp()
 elif choice == options[3]:
-    pass
+    boys_toilet()
+
 elif choice == options[4]:
-    pass
+    conclude()
+
