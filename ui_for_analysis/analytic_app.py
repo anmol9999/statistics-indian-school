@@ -11,16 +11,16 @@ from plotly.offline import iplot
 @st.cache
 def load_data(op):
     if op=='dropout':
-        dropout = pd.read_csv('datasets\dropout_ratio.csv')
+        dropout = pd.read_csv('datasets/dropout_ratio.csv')
         return dropout
     elif op=='enrollment':
-        enroll = pd.read_csv('datasets\enrollment_ratio.csv')
+        enroll = pd.read_csv('datasets/enrollment_ratio.csv')
         return enroll
     elif op=='computers':
-        comps = pd.read_csv('datasets\percentage-of-schools-with-comps.csv')
+        comps = pd.read_csv('datasets/percentage-of-schools-with-comps.csv')
         return comps
     elif op=='boys toilet':
-        boys_toilet = pd.read_csv('datasets\schools-with-boys-toilet.csv')
+        boys_toilet = pd.read_csv('datasets/schools-with-boys-toilet.csv')
         return boys_toilet
     #elif op=='boys toilet':
        # girls_toilet = pd.read_csv('datasets\schools-with-girls-toilet.csv')
